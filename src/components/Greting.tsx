@@ -14,6 +14,7 @@ const [names,setNames] = useState<{id:number ;name:string}[]>([
     {id:2 ,name:'Igor'}
 ])
 const [newName,setNewName] = useState<string>('')
+const [editingNameId,setEditingNameId] = useState<number | null>(null)
 
 
 const changeName = (e:ChangeEvent<HTMLInputElement>) => {
@@ -31,9 +32,26 @@ const ClearList = () => {
     setNames([])
 }
 
-const deleteName = (id:number) =>{
-   setNames(names.filter(name=>name.id!==id))
+const deleteName = (idToRemove:number) =>{
+   setNames(names.filter(name=>name.id!==idToRemove))
 }
+
+const startEditing = (id:number) => {
+    setEditingNameId(id)
+    const nameToEdit = names.find(name=>name.id===id)
+    if(nameToEdit) setNewName(nameToEdit.name)
+}
+
+const saveName = () =>{
+    if(newName!==''){
+        setNames(names.map((name)=>
+            name.id===editingNameId? {...name,name:newName}:name
+        ))
+        setEditingNameId(null)
+        setNewName('')
+    }
+}
+
 
     return(
         <div >
@@ -41,8 +59,25 @@ const deleteName = (id:number) =>{
            <ol>
             {names.map(nameObj=>(
                 <li style={{width,height,marginBottom:'30px',display:'flex',justifyContent:'space-between'}} key={nameObj.id}>
-                    {nameObj.name}
-                    <Button onClick={()=>deleteName(nameObj.id)}>удалить</Button>
+                    {editingNameId===nameObj.id?(
+                        <>
+                        <input
+                          type="text"
+                          value={newName}
+                          onChange={changeName}
+                          placeholder="Редактируйте имя"
+                          style={{ fontSize: 18 }}
+                        />
+                        <Button onClick={saveName}>Сохранить</Button>
+                      </>
+                    ):(
+                       <>
+                       {nameObj.name}
+                       <Button onClick={() => startEditing(nameObj.id)}>Редактировать</Button>
+                       <Button onClick={()=>deleteName(nameObj.id)}>удалить</Button>
+                       </>
+                    )}
+                    
                 </li>
             ))}
            </ol>
