@@ -31,13 +31,18 @@ const ClearList = () => {
     setNames([])
 }
 
+const deleteName = (id:number) =>{
+   setNames(names.filter(name=>name.id!==id))
+}
+
     return(
         <div >
            <h3>Список Пользователей:</h3>
            <ol>
-            {names.map(name=>(
-                <li style={{width,height,marginBottom:'10px'}} key={name.id}>
-                    {name.name}
+            {names.map(nameObj=>(
+                <li style={{width,height,marginBottom:'30px',display:'flex',justifyContent:'space-between'}} key={nameObj.id}>
+                    {nameObj.name}
+                    <Button onClick={()=>deleteName(nameObj.id)}>удалить</Button>
                 </li>
             ))}
            </ol>
